@@ -1172,19 +1172,17 @@ def load_model(path: str, driver_version="tpu_driver0.1_dev20210607", hf_checkpo
     jax.host_id = jax.process_index
 
     print("Connecting to your Colab instance's TPU", flush=True)
-    spinner = multiprocessing.Process(target=show_spinner, args=())
-    spinner.start()
+
     if os.environ.get('COLAB_TPU_ADDR', '') != '':
         tpu_address = os.environ['COLAB_TPU_ADDR']  # Colab
     else:
         tpu_address = os.environ['TPU_NAME']  # Kaggle
     tpu_address = tpu_address.replace("grpc://", "")
     tpu_address_without_port = tpu_address.split(':', 1)[0]
-    url = f'http://{tpu_address_without_port}:8475/requestversion/{driver_version}'
-    requests.post(url)
-    config.FLAGS.jax_xla_backend = "tpu_driver"
-    config.FLAGS.jax_backend_target = "grpc://" + tpu_address
-    spinner.terminate()
+    start = time.time()
+    tpu_size = jax.device_count()
+    print(f"jax devices: {tpu_size}")
+    print(f"jax runtime initialized in {time.time() - start:.06}s")
     print()
 
     cores_per_replica = params["cores_per_replica"]

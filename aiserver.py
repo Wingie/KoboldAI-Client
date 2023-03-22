@@ -1417,6 +1417,7 @@ def general_startup(override_args=None):
         args.quiet = True;
         args.lowmem = True;
         args.noaimenu = True;
+        vars.use_colab_tpu = True;
 
     if args.quiet:
         vars.quiet = True
